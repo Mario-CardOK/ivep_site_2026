@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="ru">
-
+<meta http-equiv="Content-Security-Policy" 
+      content="default-src 'self'; 
+               script-src 'self' 'unsafe-inline'; 
+               style-src 'self' 'unsafe-inline'; 
+               img-src 'self' data: https:; 
+               connect-src 'self'; 
+               frame-ancestors 'none'; 
+               base-uri 'self'; 
+               form-action 'self';">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -40,7 +48,6 @@
                 <li><a href="#departments">Научные подразделения</a></li>
                 <li><a href="#publications">Публикации</a></li>
                 <li><a href="#postgrad">Аспирантура</a></li>
-                <li><a href="#results">Результаты НИР</a></li>
                 <li><a href="#events">Новости</a></li>
             </ul>
         </div>
@@ -121,18 +128,6 @@
                     <h2 class="section-title">Аспирантура</h2>
                     <ul class="link-list single">
                         <li><a href="pages/postgraduate-admission.html">Порядок приёма в аспирантуру</a></li>
-                        <li><a href="#">Объявления о приёме в аспирантуру</a></li>
-                    </ul>
-                </section>
-
-                <!-- Результаты НИР -->
-                <section class="section-block" id="results">
-                    <h2 class="section-title">
-                        Результаты научно-исследовательских работ
-                        и научно-организационной деятельности
-                    </h2>
-                    <ul class="link-list single">
-                        <li><a href="#">Отчёты и результаты за отчётный период</a></li>
                     </ul>
                 </section>
 
