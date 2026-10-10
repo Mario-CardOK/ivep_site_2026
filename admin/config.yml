@@ -1,4 +1,20 @@
-# Настройки CMS
 backend:
-  name: git-gateway
+  name: github
+  repo: Mario-CardOK/ivep_site_2026
   branch: main
+  base_url: https://ivep-auth.olegkretov078.workers.dev
+  auth_endpoint: /auth
+
+media_folder: "images/news"
+public_folder: "/ivep_site_2026/images/news"
+
+collections:
+  - name: "news"
+    label: "Новости"
+    folder: "_news"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - { label: "Заголовок", name: "title", widget: "string" }
+      - { label: "Дата", name: "date", widget: "datetime" }
+      - { label: "Текст новости", name: "body", widget: "markdown" }
