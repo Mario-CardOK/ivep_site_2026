@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Новости — ИВЭП ДВО РАН</title>
     <link rel="stylesheet" href="../style.css">
 </head>
-
 <body>
 
     <!-- ===== ШАПКА ===== -->
@@ -16,10 +14,10 @@
             <a href="../index.html" class="logo-block">
                 <div class="emblem">
                     <svg viewBox="0 0 60 60" width="60" height="60">
-                        <circle cx="30" cy="30" r="28" fill="none" stroke="#1a4b7a" stroke-width="2" />
-                        <path d="M15 35 Q30 15 45 35" fill="none" stroke="#1a4b7a" stroke-width="2" />
-                        <path d="M15 40 Q30 20 45 40" fill="none" stroke="#2d8ac7" stroke-width="2" />
-                        <circle cx="30" cy="30" r="4" fill="#1a4b7a" />
+                        <circle cx="30" cy="30" r="28" fill="none" stroke="#1a4b7a" stroke-width="2"/>
+                        <path d="M15 35 Q30 15 45 35" fill="none" stroke="#1a4b7a" stroke-width="2"/>
+                        <path d="M15 40 Q30 20 45 40" fill="none" stroke="#2d8ac7" stroke-width="2"/>
+                        <circle cx="30" cy="30" r="4" fill="#1a4b7a"/>
                     </svg>
                 </div>
                 <div class="title-block">
@@ -55,7 +53,7 @@
         </div>
     </div>
 
-    <!-- ===== ЗАГОЛОВОК ===== -->
+    <!-- ===== ЗАГОЛОВОК СТРАНИЦЫ ===== -->
     <section class="page-header">
         <div class="container">
             <h1>Новости</h1>
@@ -84,167 +82,40 @@
 
     <!-- ===== ЗАГРУЗКА НОВОСТЕЙ ИЗ JSON ===== -->
     <script>
-        fetch('../_news/news.json?v=' + Date.now())
-            .then(response => response.json())
-            .then(news => {
-                const container = document.getElementById('news-container');
+    fetch('../_news/news.json?v=' + Date.now())
+        .then(response => response.json())
+        .then(news => {
+            const container = document.getElementById('news-container');
 
-                if (!news || news.length === 0) {
-                    container.innerHTML = '<p class="news-empty">Пока новостей нет.</p>';
-                    return;
-                }
+            if (!news || news.length === 0) {
+                container.innerHTML = '<p class="news-empty">Пока новостей нет.</p>';
+                return;
+            }
 
-                // Сортировка по дате (новые сверху)
-                news.sort((a, b) => new Date(b.date) - new Date(a.date));
+            news.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-                container.innerHTML = news.map(item => `
+            container.innerHTML = news.map(item => `
                 <article class="news-item">
                     <div class="news-date">${formatDate(item.date)}</div>
                     <h2 class="news-title">${item.title}</h2>
                     <div class="news-body">${item.body}</div>
                 </article>
             `).join('');
-            })
-            .catch(err => {
-                console.error('Ошибка загрузки новостей:', err);
-                document.getElementById('news-container').innerHTML =
-                    '<p class="news-empty">Не удалось загрузить новости.</p>';
-            });
+        })
+        .catch(err => {
+            console.error('Ошибка загрузки новостей:', err);
+            document.getElementById('news-container').innerHTML =
+                '<p class="news-empty">Не удалось загрузить новости.</p>';
+        });
 
-        function formatDate(str) {
-            const d = new Date(str);
-            if (isNaN(d)) return str;
-            return d.toLocaleDateString('ru-RU', {
-                day: 'numeric', month: 'long', year: 'numeric'
-            });
-        }
+    function formatDate(str) {
+        const d = new Date(str);
+        if (isNaN(d)) return str;
+        return d.toLocaleDateString('ru-RU', {
+            day: 'numeric', month: 'long', year: 'numeric'
+        });
+    }
     </script>
 
 </body>
-
-</html>
-<!DOCTYPE html>
-<html lang="ru">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Новости — ИВЭП ДВО РАН</title>
-    <link rel="stylesheet" href="../style.css">
-</head>
-
-<body>
-
-    <!-- ===== ШАПКА ===== -->
-    <header class="header">
-        <div class="container header-inner">
-            <a href="../index.html" class="logo-block">
-                <div class="emblem">
-                    <svg viewBox="0 0 60 60" width="60" height="60">
-                        <circle cx="30" cy="30" r="28" fill="none" stroke="#1a4b7a" stroke-width="2" />
-                        <path d="M15 35 Q30 15 45 35" fill="none" stroke="#1a4b7a" stroke-width="2" />
-                        <path d="M15 40 Q30 20 45 40" fill="none" stroke="#2d8ac7" stroke-width="2" />
-                        <circle cx="30" cy="30" r="4" fill="#1a4b7a" />
-                    </svg>
-                </div>
-                <div class="title-block">
-                    <div class="institute-name">Институт водных и экологических проблем</div>
-                    <div class="institute-sub">Дальневосточного отделения Российской академии наук</div>
-                    <div class="institute-short">ИВЭП ДВО РАН</div>
-                </div>
-            </a>
-        </div>
-    </header>
-
-    <!-- ===== НАВИГАЦИЯ ===== -->
-    <nav class="main-nav">
-        <div class="container">
-            <ul class="nav-list">
-                <li><a href="../index.html#about">Об институте</a></li>
-                <li><a href="../index.html#departments">Научные подразделения</a></li>
-                <li><a href="../index.html#publications">Публикации</a></li>
-                <li><a href="../index.html#projects">Проекты</a></li>
-                <li><a href="../index.html#postgrad">Аспирантура</a></li>
-                <li><a href="../index.html#results">Результаты НИР</a></li>
-                <li><a href="news.html" class="active">Новости</a></li>
-            </ul>
-        </div>
-    </nav>
-
-    <!-- ===== ХЛЕБНЫЕ КРОШКИ ===== -->
-    <div class="breadcrumbs">
-        <div class="container">
-            <a href="../index.html">Главная</a>
-            <span class="sep">›</span>
-            <span class="current">Новости</span>
-        </div>
-    </div>
-
-    <!-- ===== ЗАГОЛОВОК ===== -->
-    <section class="page-header">
-        <div class="container">
-            <h1>Новости</h1>
-            <p class="page-subtitle">
-                События, объявления и мероприятия ИВЭП ДВО РАН
-            </p>
-        </div>
-    </section>
-
-    <!-- ===== СПИСОК НОВОСТЕЙ ===== -->
-    <main class="main-content">
-        <div class="container">
-            <div id="news-container" class="news-list">
-                <p class="news-loading">Загрузка новостей…</p>
-            </div>
-        </div>
-    </main>
-
-    <!-- ===== ФУТЕР ===== -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-line"></div>
-            <p>© 2026 Институт водных и экологических проблем ДВО РАН, г. Хабаровск</p>
-        </div>
-    </footer>
-
-    <!-- ===== ЗАГРУЗКА НОВОСТЕЙ ИЗ JSON ===== -->
-    <script>
-        fetch('../_news/news.json?v=' + Date.now())
-            .then(response => response.json())
-            .then(news => {
-                const container = document.getElementById('news-container');
-
-                if (!news || news.length === 0) {
-                    container.innerHTML = '<p class="news-empty">Пока новостей нет.</p>';
-                    return;
-                }
-
-                // Сортировка по дате (новые сверху)
-                news.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-                container.innerHTML = news.map(item => `
-                <article class="news-item">
-                    <div class="news-date">${formatDate(item.date)}</div>
-                    <h2 class="news-title">${item.title}</h2>
-                    <div class="news-body">${item.body}</div>
-                </article>
-            `).join('');
-            })
-            .catch(err => {
-                console.error('Ошибка загрузки новостей:', err);
-                document.getElementById('news-container').innerHTML =
-                    '<p class="news-empty">Не удалось загрузить новости.</p>';
-            });
-
-        function formatDate(str) {
-            const d = new Date(str);
-            if (isNaN(d)) return str;
-            return d.toLocaleDateString('ru-RU', {
-                day: 'numeric', month: 'long', year: 'numeric'
-            });
-        }
-    </script>
-
-</body>
-
 </html>
