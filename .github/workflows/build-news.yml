@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Convert Markdown to JSON
+            - name: Convert Markdown to JSON
         run: |
           python3 << 'PYEOF'
           import os, json, re
@@ -34,11 +34,38 @@ jobs:
                   continue
 
               meta_raw, body = match.groups()
+
+              # Парсим YAML-подобный frontmatter с поддержкой многострочных значений
               meta = {}
+              current_key = None
+              current_multiline = False
+
               for line in meta_raw.split("\n"):
+                  # Многострочное значение (после | или >)
+                  if current_multiline:
+                      if line.startswith("  ") or line.startswith("\t"):
+                          meta[current_key] += line.strip() + " "
+                          continue
+                      else:
+                          current_multiline = False
+                          current_key = None
+
                   if ":" in line:
                       k, v = line.split(":", 1)
-                      meta[k.strip()] = v.strip().strip('"').strip("'")
+                      k = k.strip()
+                      v = v.strip()
+
+                      if v in ("|", ">", "|-", ">-"):
+                          meta[k] = ""
+                          current_key = k
+                          current_multiline = True
+                      else:
+                          meta[k] = v.strip('"').strip("'")
+
+              # Чистим trailing пробел
+              for k in meta:
+                  if isinstance(meta[k], str):
+                      meta[k] = meta[k].strip()
 
               html_body = "<p>" + body.strip().replace("\n\n", "</p><p>").replace("\n", "<br>") + "</p>"
 
