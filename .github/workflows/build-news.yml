@@ -1,4 +1,4 @@
-name: Build news.json from Markdown
+name: Build news.json
 
 on:
   push:
@@ -14,9 +14,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-            - name: Convert Markdown to JSON
+      - name: Convert Markdown to JSON
         run: |
-          python3 << 'EOF'
+          python3 << 'PYEOF'
           import os, json, re
 
           news_dir = "_news"
@@ -42,13 +42,13 @@ jobs:
 
               html_body = "<p>" + body.strip().replace("\n\n", "</p><p>").replace("\n", "<br>") + "</p>"
 
-              # Краткое описание (если не задано — берём первые 200 символов текста)
               excerpt = meta.get("excerpt", "").strip()
               if not excerpt:
                   plain = re.sub(r"<[^>]+>", "", html_body)
-                  excerpt = plain[:200].strip() + ("…" if len(plain) > 200 else "")
+                  excerpt = plain[:200].strip()
+                  if len(plain) > 200:
+                      excerpt += "…"
 
-              # Имя файла без .md — для ссылки на полную новость
               slug = filename.replace(".md", "")
 
               items.append({
@@ -64,8 +64,8 @@ jobs:
           with open("_news/news.json", "w", encoding="utf-8") as f:
               json.dump(items, f, ensure_ascii=False, indent=2)
 
-          print(f"Сгенерировано новостей: {len(items)}")
-          EOF
+          print("Generated news:", len(items))
+          PYEOF
 
       - name: Commit news.json
         run: |
