@@ -1,0 +1,68 @@
+name: Build news.json from Markdown
+
+on:
+  push:
+    paths:
+      - '_news/*.md'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Convert Markdown to JSON
+        run: |
+          python3 << 'EOF'
+          import os, json, re, datetime
+
+          news_dir = "_news"
+          items = []
+
+          for filename in sorted(os.listdir(news_dir)):
+              if not filename.endswith(".md"):
+                  continue
+              path = os.path.join(news_dir, filename)
+              with open(path, encoding="utf-8") as f:
+                  content = f.read()
+
+              # Frontmatter между --- и ---
+              match = re.match(r"^---\n(.*?)\n---\n(.*)$", content, re.DOTALL)
+              if not match:
+                  continue
+
+              meta_raw, body = match.groups()
+              meta = {}
+              for line in meta_raw.split("\n"):
+                  if ":" in line:
+                      k, v = line.split(":", 1)
+                      meta[k.strip()] = v.strip().strip('"').strip("'")
+
+              # Markdown → HTML (простейшая замена абзацев)
+              html_body = "<p>" + body.strip().replace("\n\n", "</p><p>").replace("\n", "<br>") + "</p>"
+
+              items.append({
+                  "date": meta.get("date", ""),
+                  "title": meta.get("title", ""),
+                  "body": html_body
+              })
+
+          # Сортировка — новые сверху
+          items.sort(key=lambda x: x["date"], reverse=True)
+
+          with open("_news/news.json", "w", encoding="utf-8") as f:
+              json.dump(items, f, ensure_ascii=False, indent=2)
+
+          print(f"Сгенерировано новостей: {len(items)}")
+          EOF
+
+      - name: Commit news.json
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add _news/news.json
+          git diff --quiet && git diff --staged --quiet || git commit -m "Auto-update news.json"
+          git push
