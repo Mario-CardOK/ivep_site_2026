@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-            - name: Convert Markdown to JSON
+      - name: Convert Markdown to JSON
         run: |
           python3 << 'PYEOF'
           import os, json, re
@@ -35,15 +35,13 @@ jobs:
 
               meta_raw, body = match.groups()
 
-              # Парсим YAML-подобный frontmatter с поддержкой многострочных значений
               meta = {}
               current_key = None
               current_multiline = False
 
               for line in meta_raw.split("\n"):
-                  # Многострочное значение (после | или >)
                   if current_multiline:
-                      if line.startswith("  ") or line.startswith("\t"):
+                      if line.startswith("  "):
                           meta[current_key] += line.strip() + " "
                           continue
                       else:
@@ -62,8 +60,7 @@ jobs:
                       else:
                           meta[k] = v.strip('"').strip("'")
 
-              # Чистим trailing пробел
-              for k in meta:
+              for k in list(meta.keys()):
                   if isinstance(meta[k], str):
                       meta[k] = meta[k].strip()
 
@@ -74,7 +71,7 @@ jobs:
                   plain = re.sub(r"<[^>]+>", "", html_body)
                   excerpt = plain[:200].strip()
                   if len(plain) > 200:
-                      excerpt += "…"
+                      excerpt += "..."
 
               slug = filename.replace(".md", "")
 
@@ -91,7 +88,7 @@ jobs:
           with open("_news/news.json", "w", encoding="utf-8") as f:
               json.dump(items, f, ensure_ascii=False, indent=2)
 
-          print("Generated news:", len(items))
+          print("Generated:", len(items))
           PYEOF
 
       - name: Commit news.json
