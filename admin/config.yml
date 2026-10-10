@@ -1,0 +1,4 @@
+# Настройки CMS
+backend:
+  name: git-gateway
+  branch: main
