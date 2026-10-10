@@ -16,5 +16,6 @@ collections:
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     fields:
       - { label: "Заголовок", name: "title", widget: "string" }
-      - { label: "Дата", name: "date", widget: "datetime" }
+      - { label: "Дата", name: "date", widget: "datetime", format: "YYYY-MM-DD", time_format: false }
+      - { label: "Обложка новости", name: "thumbnail", widget: "image", required: false } # <-- Новое поле
       - { label: "Текст новости", name: "body", widget: "markdown" }
