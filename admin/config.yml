@@ -17,11 +17,18 @@ collections:
     extension: "md"
     format: "frontmatter"
     fields:
-      - { label: "Заголовок", name: "title", widget: "string" }
-      - { label: "Дата", name: "date", widget: "datetime", format: "YYYY-MM-DD", time_format: false }
-<<<<<<< HEAD
-      - { label: "Обложка новости", name: "thumbnail", widget: "image", required: false } # <-- Новое поле
-      - { label: "Текст новости", name: "body", widget: "markdown" }
-=======
-      - { label: "Текст новости", name: "body", widget: "markdown" }
->>>>>>> 59cb74b990b0420d8182a457bcce550502008360
+      - label: "Заголовок"
+        name: "title"
+        widget: "string"
+      - label: "Дата"
+        name: "date"
+        widget: "datetime"
+        format: "YYYY-MM-DD"
+        time_format: false
+      - label: "Обложка новости"
+        name: "thumbnail"
+        widget: "image"
+        required: false
+      - label: "Текст новости"
+        name: "body"
+        widget: "markdown"
