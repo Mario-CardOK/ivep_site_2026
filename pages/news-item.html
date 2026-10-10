@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Новости — ИВЭП ДВО РАН</title>
+    <title>Новость — ИВЭП ДВО РАН</title>
     <link rel="stylesheet" href="../style.css">
 </head>
 <body>
 
-    <!-- ===== ШАПКА ===== -->
+    <!-- ===== ШАПКА (как на других страницах) ===== -->
     <header class="header">
         <div class="container header-inner">
             <a href="../index.html" class="logo-block">
@@ -49,26 +49,18 @@
         <div class="container">
             <a href="../index.html">Главная</a>
             <span class="sep">›</span>
-            <span class="current">Новости</span>
+            <a href="news.html">Новости</a>
+            <span class="sep">›</span>
+            <span class="current" id="news-title-crumb">Просмотр новости</span>
         </div>
     </div>
 
-    <!-- ===== ЗАГОЛОВОК СТРАНИЦЫ ===== -->
-    <section class="page-header">
-        <div class="container">
-            <h1>Новости</h1>
-            <p class="page-subtitle">
-                События, объявления и мероприятия ИВЭП ДВО РАН
-            </p>
-        </div>
-    </section>
-
-    <!-- ===== СПИСОК НОВОСТЕЙ ===== -->
+    <!-- ===== КОНТЕНТ ===== -->
     <main class="main-content">
         <div class="container">
-            <div id="news-container" class="news-list">
-                <p class="news-loading">Загрузка новостей…</p>
-            </div>
+            <article id="news-full" class="news-full">
+                <p class="news-loading">Загрузка новости…</p>
+            </article>
         </div>
     </main>
 
@@ -80,36 +72,38 @@
         </div>
     </footer>
 
-    <!-- ===== ЗАГРУЗКА НОВОСТЕЙ ИЗ JSON ===== -->
-        <script>
-    fetch('../_news/news.json?v=' + Date.now())
-        .then(response => response.json())
-        .then(news => {
-            const container = document.getElementById('news-container');
+    <script>
+    const params = new URLSearchParams(window.location.search);
+    const slug = params.get('slug');
 
-            if (!news || news.length === 0) {
-                container.innerHTML = '<p class="news-empty">Пока новостей нет.</p>';
-                return;
-            }
+    if (!slug) {
+        document.getElementById('news-full').innerHTML =
+            '<p class="news-empty">Новость не найдена.</p>';
+    } else {
+        fetch('../_news/news.json?v=' + Date.now())
+            .then(r => r.json())
+            .then(news => {
+                const item = news.find(n => n.slug === slug);
+                if (!item) {
+                    document.getElementById('news-full').innerHTML =
+                        '<p class="news-empty">Новость не найдена.</p>';
+                    return;
+                }
+                document.getElementById('news-title-crumb').textContent = item.title;
+                document.title = item.title + ' — ИВЭП ДВО РАН';
 
-            news.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-            container.innerHTML = news.map(item => `
-                <article class="news-item">
+                document.getElementById('news-full').innerHTML = `
                     <div class="news-date">${formatDate(item.date)}</div>
-                    <h2 class="news-title">${item.title}</h2>
-                    <div class="news-excerpt">${item.excerpt}</div>
-                    <a href="news-item.html?slug=${encodeURIComponent(item.slug)}" class="news-more">
-                        Открыть полностью →
-                    </a>
-                </article>
-            `).join('');
-        })
-        .catch(err => {
-            console.error('Ошибка загрузки новостей:', err);
-            document.getElementById('news-container').innerHTML =
-                '<p class="news-empty">Не удалось загрузить новости.</p>';
-        });
+                    <h1 class="news-full-title">${item.title}</h1>
+                    <div class="news-full-body">${item.body}</div>
+                    <a href="news.html" class="news-back">← Все новости</a>
+                `;
+            })
+            .catch(() => {
+                document.getElementById('news-full').innerHTML =
+                    '<p class="news-empty">Не удалось загрузить новость.</p>';
+            });
+    }
 
     function formatDate(str) {
         const d = new Date(str);

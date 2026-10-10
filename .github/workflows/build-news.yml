@@ -14,10 +14,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Convert Markdown to JSON
+            - name: Convert Markdown to JSON
         run: |
           python3 << 'EOF'
-          import os, json, re, datetime
+          import os, json, re
 
           news_dir = "_news"
           items = []
@@ -29,7 +29,6 @@ jobs:
               with open(path, encoding="utf-8") as f:
                   content = f.read()
 
-              # Frontmatter между --- и ---
               match = re.match(r"^---\n(.*?)\n---\n(.*)$", content, re.DOTALL)
               if not match:
                   continue
@@ -41,16 +40,25 @@ jobs:
                       k, v = line.split(":", 1)
                       meta[k.strip()] = v.strip().strip('"').strip("'")
 
-              # Markdown → HTML (простейшая замена абзацев)
               html_body = "<p>" + body.strip().replace("\n\n", "</p><p>").replace("\n", "<br>") + "</p>"
+
+              # Краткое описание (если не задано — берём первые 200 символов текста)
+              excerpt = meta.get("excerpt", "").strip()
+              if not excerpt:
+                  plain = re.sub(r"<[^>]+>", "", html_body)
+                  excerpt = plain[:200].strip() + ("…" if len(plain) > 200 else "")
+
+              # Имя файла без .md — для ссылки на полную новость
+              slug = filename.replace(".md", "")
 
               items.append({
                   "date": meta.get("date", ""),
                   "title": meta.get("title", ""),
-                  "body": html_body
+                  "excerpt": excerpt,
+                  "body": html_body,
+                  "slug": slug
               })
 
-          # Сортировка — новые сверху
           items.sort(key=lambda x: x["date"], reverse=True)
 
           with open("_news/news.json", "w", encoding="utf-8") as f:
